@@ -8,7 +8,7 @@
     "dev": "nodemon ./src/index.ts",
     "start": "npx tsc && node ./dist/index.js",
     "build": "npx tsc",
-    "vercel-build": "echo build"
+    "vercel-build": "prisma generate"
   },
   "keywords": [],
   "author": "",
