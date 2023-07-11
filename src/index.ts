@@ -17,7 +17,7 @@ app.use(morgan("tiny"));
 app.use(express.json());
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('Express + TypeScript Server');
+  res.send('Sistech Final Project API');
 });
 
 app.listen(port, () => {

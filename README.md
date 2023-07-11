@@ -4,4 +4,4 @@ API url: https://sistech-finpro.vercel.app/
 
 Documentation: 
 
-Postman Collection: 
+Postman Collection: ristek.link/finpro-postman

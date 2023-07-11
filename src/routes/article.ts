@@ -3,6 +3,7 @@ import {
   createArticle,
   deleteArticle,
   getArticle,
+  getUserArticle,
   updateArticle,
 } from "../controller/article";
 import { tokenVerifier } from "../middleware/tokenVerifier";
@@ -24,9 +25,14 @@ articleRouter.post(
 
 articleRouter.get(
   "/",
-  tokenVerifier,
-  validate([query("creatorId").isString().optional()]),
   getArticle
+);
+
+articleRouter.get(
+  "/:username",
+  tokenVerifier,
+  validate([param("username").isString()]),
+  getUserArticle
 );
 
 articleRouter.delete(
@@ -35,7 +41,7 @@ articleRouter.delete(
   validate([param("articleId").isInt()]),
   deleteArticle
 );
-articleRouter.put(
+articleRouter.patch(
   "/:articleId",
   tokenVerifier,
   validate([

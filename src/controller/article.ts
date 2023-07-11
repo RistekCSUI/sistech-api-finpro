@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Response, Request } from "express";
 import { RequestWithUserId } from "../middleware/tokenVerifier";
 import { dbClient } from "../config/db";
 import { ArticleCreateDto, ArticleUpdateDto } from "../dto/ArtcileDto";
@@ -57,11 +57,9 @@ export const createArticle = async (req: RequestWithUserId, res: Response) => {
   }
 };
 
-export const getArticle = async (req: RequestWithUserId, res: Response) => {
-  const { creatorId } = req.query;
+export const getArticle = async (req: Request, res: Response) => {
   try {
     const articles = await dbClient.article.findMany({
-      where: { creatorId: creatorId ? Number(creatorId) : undefined },
       select: {
         id: true,
         title: true,
@@ -85,7 +83,42 @@ export const getArticle = async (req: RequestWithUserId, res: Response) => {
       return { ...rest, tag: newTags };
     });
     return res.status(200).send(result);
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
+};
+
+export const getUserArticle = async (req: RequestWithUserId, res: Response) => {
+  const { username } = req.params;
+  try {
+    const articles = await dbClient.article.findMany({
+      where: { creator: { username: username } },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createdAt: true,
+        updatedAt: true,
+        creator: {
+          select: {
+            username: true,
+          },
+        },
+        tag: { select: { tag: { select: { name: true } } } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    // Format query result
+    const result = articles.map((article) => {
+      const { tag, ...rest } = article;
+      const newTags = article.tag.map((tag) => tag.tag.name);
+
+      return { ...rest, tag: newTags };
+    });
+    return res.status(200).send(result);
+  } catch (error) {
+    res.status(500).send("Internal Server Error");
+  }
 };
 
 export const deleteArticle = async (req: RequestWithUserId, res: Response) => {
