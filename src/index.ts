@@ -15,6 +15,10 @@ const port = process.env.PORT || 3001;
 // Middleware
 app.use(morgan("tiny"));
 app.use(express.json());
+app.use('*.css', (req, res, next) => {
+  res.set('Content-Type', 'text/css');
+  next();
+});
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Sistech Final Project API');
@@ -29,5 +33,4 @@ app.use("/api/v1/users", userRouter)
 app.use("/api/v1/articles", articleRouter)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
 export default app;
