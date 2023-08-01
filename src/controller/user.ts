@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { UserLoginDto, UserRegisterDto } from "../dto/userDto";
 import { dbClient } from "../config/db";
+import { Prisma } from "@prisma/client";
 
 export const register = async (req: Request, res: Response) => {
   const { email, password, username, firstName, lastName }: UserRegisterDto =
@@ -27,7 +28,12 @@ export const register = async (req: Request, res: Response) => {
 
     res.status(201).json({ token });
   } catch (error) {
-    return res.status(500).send(error);
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      // The .code property can be accessed in a type-safe manner
+      if (error.code === "P2002") {
+        return res.status(422).send("There is a unique constraint violation.");
+      }
+    }
   }
 };
 
