@@ -5,7 +5,7 @@ import userRouter from './routes/user';
 import articleRouter from './routes/article';
 import swaggerUi from "swagger-ui-express";
 import * as swaggerDocument from "../swagger.json";
-
+import cors from 'cors'
 
 dotenv.config();
 
@@ -19,6 +19,14 @@ app.use('*.css', (req, res, next) => {
   res.set('Content-Type', 'text/css');
   next();
 });
+
+var allowedOrigins = ['http://localhost:3000', 'https://sistech-finpro.vercel.app'];
+
+const options: cors.CorsOptions = {
+  origin: allowedOrigins
+}
+
+app.use(cors(options))
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Sistech Final Project API');
